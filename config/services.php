@@ -1,0 +1,23 @@
+<?php
+
+return [
+    'mailgun' => [
+        'domain'   => env('MAILGUN_DOMAIN'),
+        'secret'   => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme'   => 'https',
+    ],
+    'service_b' => [
+        'base_url' => env('SERVICE_B_BASE_URL', 'http://localhost:8001'),
+        'api_key'  => env('SERVICE_B_API_KEY', ''),
+        'timeout'  => 10,
+    ],
+    'service_a' => [
+        'base_url' => env('SERVICE_A_BASE_URL', 'http://localhost:8002'),
+        'api_key'  => env('SERVICE_A_API_KEY', ''),
+    ],
+    'service_d' => [
+        'base_url' => env('SERVICE_D_BASE_URL', 'http://localhost:8003'),
+        'api_key'  => env('SERVICE_D_API_KEY', ''),
+    ],
+];
