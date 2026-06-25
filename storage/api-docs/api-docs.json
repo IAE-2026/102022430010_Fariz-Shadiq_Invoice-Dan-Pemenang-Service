@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Invoice Winner API",
-        "description": "API Documentation",
+        "description": "API Documentation untuk Invoice & Winner Service",
         "version": "1.0.0"
     },
     "servers": [
@@ -17,31 +17,87 @@
                 "tags": [
                     "Invoices"
                 ],
-                "summary": "Daftar invoice",
-                "operationId": "bc7d90facaef99e1846d581b3a3b6efa",
+                "summary": "Daftar semua invoice",
+                "description": "Menampilkan daftar invoice dengan pagination.",
+                "operationId": "getInvoices",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman (default: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "Daftar invoice berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Daftar invoice berhasil diambil."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Invoice"
+                                            }
+                                        },
+                                        "": {
+                                            "$ref": "#/components/schemas/MetaResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
                     "Invoices"
                 ],
-                "summary": "Buat invoice",
-                "operationId": "2a3d332a2b06bcf3aa6a68444f786beb",
+                "summary": "Buat invoice baru",
+                "description": "Membuat invoice lelang baru berdasarkan data dari Service B atau data simulasi (mock).",
+                "operationId": "createInvoice",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "auction_id"
+                                ],
                                 "properties": {
                                     "auction_id": {
+                                        "description": "ID lelang dari Service B",
                                         "type": "string",
                                         "example": "AUC-001"
                                     },
                                     "use_mock": {
+                                        "description": "Gunakan data simulasi jika Service B tidak aktif",
                                         "type": "boolean",
                                         "example": true
                                     }
@@ -53,9 +109,52 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Invoice created"
+                        "description": "Invoice berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invoice berhasil dibuat."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Invoice"
+                                        },
+                                        "": {
+                                            "$ref": "#/components/schemas/MetaResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Request tidak valid"
+                    },
+                    "422": {
+                        "description": "Lelang belum berakhir atau gagal memproses data"
+                    },
+                    "409": {
+                        "description": "Invoice untuk lelang tersebut sudah ada"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
             }
         },
         "/api/v1/invoices/{id}": {
@@ -63,21 +162,60 @@
                 "tags": [
                     "Invoices"
                 ],
-                "summary": "Detail invoice",
-                "operationId": "8e26839ec5797200db20667a31142ea0",
+                "summary": "Detail invoice berdasarkan ID",
+                "description": "Menampilkan detail data invoice beserta pemenang lelang.",
+                "operationId": "getInvoiceById",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Invoice ID",
-                        "required": true
+                        "description": "ID invoice",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "Detail invoice berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail invoice berhasil diambil."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Invoice"
+                                        },
+                                        "": {
+                                            "$ref": "#/components/schemas/MetaResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
             }
         },
         "/api/test": {
@@ -95,10 +233,355 @@
             }
         }
     },
+    "components": {
+        "schemas": {
+            "Winner": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "auction_id": {
+                        "type": "string",
+                        "example": "AUC-001"
+                    },
+                    "item_id": {
+                        "type": "string",
+                        "example": "ITM-001"
+                    },
+                    "bidder_id": {
+                        "type": "string",
+                        "example": "USR-001"
+                    },
+                    "bidder_name": {
+                        "type": "string",
+                        "example": "Budi Santoso"
+                    },
+                    "bidder_email": {
+                        "type": "string",
+                        "example": "budi@email.com"
+                    },
+                    "item_name": {
+                        "type": "string",
+                        "example": "Laptop Asus ROG"
+                    },
+                    "winning_bid": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 15000000
+                    },
+                    "starting_price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 10000000
+                    },
+                    "bid_id": {
+                        "type": "string",
+                        "example": "BID-001"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "invoiced"
+                    },
+                    "auction_ended_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T12:00:00Z"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "WinnerDetail": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "auction_id": {
+                        "type": "string",
+                        "example": "AUC-001"
+                    },
+                    "item_id": {
+                        "type": "string",
+                        "example": "ITM-001"
+                    },
+                    "bidder_id": {
+                        "type": "string",
+                        "example": "USR-001"
+                    },
+                    "bidder_name": {
+                        "type": "string",
+                        "example": "Budi Santoso"
+                    },
+                    "bidder_email": {
+                        "type": "string",
+                        "example": "budi@email.com"
+                    },
+                    "item_name": {
+                        "type": "string",
+                        "example": "Laptop Asus ROG"
+                    },
+                    "winning_bid": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 15000000
+                    },
+                    "starting_price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 10000000
+                    },
+                    "bid_id": {
+                        "type": "string",
+                        "example": "BID-001"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "invoiced"
+                    },
+                    "auction_ended_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T12:00:00Z"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T12:00:00Z"
+                    },
+                    "invoice": {
+                        "$ref": "#/components/schemas/Invoice"
+                    }
+                },
+                "type": "object"
+            },
+            "Invoice": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "invoice_number": {
+                        "type": "string",
+                        "example": "INV-2024-000001"
+                    },
+                    "winner_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "auction_id": {
+                        "type": "string",
+                        "example": "AUC-001"
+                    },
+                    "item_id": {
+                        "type": "string",
+                        "example": "ITM-001"
+                    },
+                    "bidder_id": {
+                        "type": "string",
+                        "example": "USR-001"
+                    },
+                    "bidder_name": {
+                        "type": "string",
+                        "example": "Budi Santoso"
+                    },
+                    "bidder_email": {
+                        "type": "string",
+                        "example": "budi@email.com"
+                    },
+                    "item_name": {
+                        "type": "string",
+                        "example": "Laptop Asus ROG"
+                    },
+                    "subtotal": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 15000000
+                    },
+                    "tax_amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1650000
+                    },
+                    "admin_fee": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 300000
+                    },
+                    "total_amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 16950000
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "unpaid"
+                    },
+                    "issued_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T12:05:00Z"
+                    },
+                    "due_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-22T12:05:00Z"
+                    },
+                    "paid_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Invoice otomatis untuk pemenang lelang AUC-001"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T12:05:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T12:05:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "MetaResponse": {
+                "properties": {
+                    "meta": {
+                        "properties": {
+                            "service_name": {
+                                "type": "string",
+                                "example": "Invoice-Winner-Service"
+                            },
+                            "api_version": {
+                                "type": "string",
+                                "example": "v1"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "responses": {
+            "Unauthorized": {
+                "description": "API Key tidak ditemukan atau tidak disertakan",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "API Key tidak ditemukan. Sertakan header X-IAE-KEY."
+                                },
+                                "errors": {
+                                    "properties": {
+                                        "header": {
+                                            "type": "string",
+                                            "example": "X-IAE-KEY header is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "Forbidden": {
+                "description": "API Key tidak valid atau tidak memiliki akses",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "API Key tidak valid atau tidak memiliki akses."
+                                },
+                                "errors": {
+                                    "properties": {
+                                        "header": {
+                                            "type": "string",
+                                            "example": "Invalid X-IAE-KEY value."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "NotFound": {
+                "description": "Resource tidak ditemukan",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Resource tidak ditemukan."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "example": null,
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "description": "Sertakan API Key berupa NIM Anda (contoh: 102022430010) pada header X-IAE-KEY",
+                "name": "X-IAE-KEY",
+                "in": "header"
+            }
+        }
+    },
     "tags": [
         {
             "name": "Invoices",
-            "description": "Invoices API"
+            "description": "Endpoint untuk mengelola data invoice"
         },
         {
             "name": "Test",

@@ -1,5 +1,56 @@
 type Query {
   hello: StudentInfo @field(resolver: "App\\GraphQL\\Queries\\Hello")
+  winners(status: String @eq): [Winner!]! @all
+  winner(id: ID! @eq): Winner @find
+  invoices(status: String @eq): [Invoice!]! @all
+  invoice(id: ID! @eq): Invoice @find
+}
+
+type Mutation {
+  createInvoice(auction_id: String!, use_mock: Boolean): Invoice
+    @field(resolver: "App\\GraphQL\\Mutations\\CreateInvoiceMutation")
+}
+
+type Winner {
+  id: ID!
+  auction_id: String!
+  item_id: String!
+  bidder_id: String!
+  bidder_name: String!
+  bidder_email: String
+  item_name: String!
+  winning_bid: Float!
+  starting_price: Float
+  bid_id: String
+  status: String!
+  auction_ended_at: String
+  created_at: String
+  updated_at: String
+  invoice: Invoice @hasOne
+}
+
+type Invoice {
+  id: ID!
+  invoice_number: String!
+  winner_id: ID!
+  auction_id: String!
+  item_id: String!
+  bidder_id: String!
+  bidder_name: String!
+  bidder_email: String
+  item_name: String!
+  subtotal: Float!
+  tax_amount: Float!
+  admin_fee: Float!
+  total_amount: Float!
+  status: String!
+  issued_at: String
+  due_date: String
+  paid_at: String
+  notes: String
+  created_at: String
+  updated_at: String
+  winner: Winner @belongsTo
 }
 
 type StudentInfo {

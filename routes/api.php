@@ -19,7 +19,7 @@ Route::get('/test', [TestSwaggerController::class, 'test']);
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware(['force.json', 'api.key'])->group(function () {
 
     Route::get('/health', function () {
         return response()->json([

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: invoice-winner-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=base64:u5aCdBk0T3hF0kL1G9L9bCuorLQJNJzf8u39EVEpYmU=
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/app/database/database.sqlite
+      - IAE_API_KEY=102022430010
+      - INVOICE_PREFIX=INV
+      - INVOICE_DUE_DAYS=7
