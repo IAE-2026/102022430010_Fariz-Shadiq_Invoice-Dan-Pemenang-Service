@@ -7,59 +7,60 @@ use App\Http\Controllers\Controller;
 use App\Models\Winner;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Winners",
- *     description="Endpoint untuk mengelola data pemenang lelang"
- * )
- */
+#[OA\Tag(
+    name: "Winners",
+    description: "Endpoint untuk mengelola data pemenang lelang"
+)]
 class WinnerController extends Controller
 {
     use BaseApiResponse;
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/winners",
-     *     summary="Daftar semua pemenang lelang",
-     *     description="Menampilkan daftar pemenang lelang dengan pagination. Bisa difilter berdasarkan status.",
-     *     operationId="getWinners",
-     *     tags={"Winners"},
-     *     security={{"ApiKeyAuth": {}}},
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter berdasarkan status: pending, invoiced, paid, cancelled",
-     *         required=false,
-     *         @OA\Schema(type="string", enum={"pending", "invoiced", "paid", "cancelled"})
-     *     ),
-     *     @OA\Parameter(
-     *         name="per_page",
-     *         in="query",
-     *         description="Jumlah data per halaman (default: 10)",
-     *         required=false,
-     *         @OA\Schema(type="integer", default=10)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Daftar pemenang berhasil diambil",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/Winner")
-     *             ),
-     *             @OA\Property(ref="#/components/schemas/MetaResponse")
-     *         )
-     *     ),
-     *     @OA\Response(response=401, ref="#/components/responses/Unauthorized"),
-     *     @OA\Response(response=403, ref="#/components/responses/Forbidden")
-     * )
-     */
+    #[OA\Get(
+        path: "/api/v1/winners",
+        summary: "Daftar semua pemenang lelang",
+        description: "Menampilkan daftar pemenang lelang dengan pagination. Bisa difilter berdasarkan status.",
+        operationId: "getWinners",
+        tags: ["Winners"],
+        security: [["ApiKeyAuth" => []]],
+        parameters: [
+            new OA\Parameter(
+                name: "status",
+                in: "query",
+                description: "Filter berdasarkan status: pending, invoiced, paid, cancelled",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["pending", "invoiced", "paid", "cancelled"])
+            ),
+            new OA\Parameter(
+                name: "per_page",
+                in: "query",
+                description: "Jumlah data per halaman (default: 10)",
+                required: false,
+                schema: new OA\Schema(type: "integer", default: 10)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Daftar pemenang berhasil diambil",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "status", type: "string", example: "success"),
+                        new OA\Property(property: "message", type: "string", example: "Data retrieved successfully"),
+                        new OA\Property(
+                            property: "data",
+                            type: "array",
+                            items: new OA\Items(ref: "#/components/schemas/Winner")
+                        ),
+                        new OA\Property(ref: "#/components/schemas/MetaResponse")
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, ref: "#/components/responses/Unauthorized"),
+            new OA\Response(response: 403, ref: "#/components/responses/Forbidden")
+        ]
+    )]
     public function index(Request $request): JsonResponse
     {
         $query = Winner::with('invoice')
@@ -72,37 +73,39 @@ class WinnerController extends Controller
         return $this->paginatedResponse($winners, 'Daftar pemenang lelang berhasil diambil.');
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/winners/{id}",
-     *     summary="Detail pemenang berdasarkan ID",
-     *     description="Menampilkan detail pemenang lelang beserta invoice yang terkait.",
-     *     operationId="getWinnerById",
-     *     tags={"Winners"},
-     *     security={{"ApiKeyAuth": {}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID pemenang",
-     *         required=true,
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Detail pemenang berhasil diambil",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Data retrieved successfully"),
-     *             @OA\Property(property="data", ref="#/components/schemas/WinnerDetail"),
-     *             @OA\Property(ref="#/components/schemas/MetaResponse")
-     *         )
-     *     ),
-     *     @OA\Response(response=404, ref="#/components/responses/NotFound"),
-     *     @OA\Response(response=401, ref="#/components/responses/Unauthorized")
-     * )
-     */
+    #[OA\Get(
+        path: "/api/v1/winners/{id}",
+        summary: "Detail pemenang berdasarkan ID",
+        description: "Menampilkan detail pemenang lelang beserta invoice yang terkait.",
+        operationId: "getWinnerById",
+        tags: ["Winners"],
+        security: [["ApiKeyAuth" => []]],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                description: "ID pemenang",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Detail pemenang berhasil diambil",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "status", type: "string", example: "success"),
+                        new OA\Property(property: "message", type: "string", example: "Data retrieved successfully"),
+                        new OA\Property(property: "data", ref: "#/components/schemas/WinnerDetail"),
+                        new OA\Property(ref: "#/components/schemas/MetaResponse")
+                    ]
+                )
+            ),
+            new OA\Response(response: 404, ref: "#/components/responses/NotFound"),
+            new OA\Response(response: 401, ref: "#/components/responses/Unauthorized")
+        ]
+    )]
     public function show(int $id): JsonResponse
     {
         $winner = Winner::with('invoice')->find($id);

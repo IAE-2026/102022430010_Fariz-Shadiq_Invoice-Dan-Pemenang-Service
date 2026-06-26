@@ -2,16 +2,7 @@
 
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\WinnerController;
-use App\Http\Controllers\TestSwaggerController;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Swagger Test Route
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/test', [TestSwaggerController::class, 'test']);
 
 /*
 |--------------------------------------------------------------------------

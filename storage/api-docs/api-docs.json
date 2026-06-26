@@ -218,18 +218,144 @@
                 ]
             }
         },
-        "/api/test": {
+        "/api/v1/winners": {
             "get": {
                 "tags": [
-                    "Test"
+                    "Winners"
                 ],
-                "summary": "Test endpoint",
-                "operationId": "220d3fafb11bb6c6b5cb44324a082216",
+                "summary": "Daftar semua pemenang lelang",
+                "description": "Menampilkan daftar pemenang lelang dengan pagination. Bisa difilter berdasarkan status.",
+                "operationId": "getWinners",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter berdasarkan status: pending, invoiced, paid, cancelled",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "invoiced",
+                                "paid",
+                                "cancelled"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Jumlah data per halaman (default: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "Daftar pemenang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Winner"
+                                            }
+                                        },
+                                        "": {
+                                            "$ref": "#/components/schemas/MetaResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/winners/{id}": {
+            "get": {
+                "tags": [
+                    "Winners"
+                ],
+                "summary": "Detail pemenang berdasarkan ID",
+                "description": "Menampilkan detail pemenang lelang beserta invoice yang terkait.",
+                "operationId": "getWinnerById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID pemenang",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detail pemenang berhasil diambil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data retrieved successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/WinnerDetail"
+                                        },
+                                        "": {
+                                            "$ref": "#/components/schemas/MetaResponse"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ]
             }
         }
     },
@@ -584,8 +710,8 @@
             "description": "Endpoint untuk mengelola data invoice"
         },
         {
-            "name": "Test",
-            "description": "Test"
+            "name": "Winners",
+            "description": "Endpoint untuk mengelola data pemenang lelang"
         }
     ]
 }
