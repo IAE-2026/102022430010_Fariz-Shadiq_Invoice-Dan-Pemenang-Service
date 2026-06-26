@@ -16,12 +16,19 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . /app
 
-# Set permissions
-RUN chmod -R 777 storage bootstrap/cache
+# Install dependencies using Composer
+RUN composer install --no-interaction --optimize-autoloader
+
+# Setup .env file
+RUN cp -n .env.example .env || true
+RUN php artisan key:generate
 
 # Setup SQLite database if it doesn't exist
-RUN mkdir -p database && touch database/database.sqlite && chmod 777 database/database.sqlite
+RUN mkdir -p database && touch database/database.sqlite
+
+# Set permissions
+RUN chmod -R 777 storage bootstrap/cache database
 
 EXPOSE 8000
 
-CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000

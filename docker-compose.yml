@@ -3,11 +3,10 @@ version: '3.8'
 services:
   app:
     build: .
-    container_name: invoice-winner-service
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
