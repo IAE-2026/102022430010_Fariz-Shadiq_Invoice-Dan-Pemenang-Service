@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     'status'  => 'error',
                     'message' => 'Validasi request gagal.',
                     'errors'  => $e->errors(),
+                    'meta'    => [
+                        'service_name' => 'Invoice-Winner-Service',
+                        'api_version'  => 'v1',
+                    ],
                 ], 422);
             }
         });
@@ -36,6 +40,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     'status'  => 'error',
                     'message' => 'Data tidak ditemukan.',
                     'errors'  => null,
+                    'meta'    => [
+                        'service_name' => 'Invoice-Winner-Service',
+                        'api_version'  => 'v1',
+                    ],
                 ], 404);
             }
         });
@@ -46,6 +54,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     'status'  => 'error',
                     'message' => 'Endpoint tidak ditemukan.',
                     'errors'  => null,
+                    'meta'    => [
+                        'service_name' => 'Invoice-Winner-Service',
+                        'api_version'  => 'v1',
+                    ],
                 ], 404);
             }
         });
@@ -57,6 +69,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     'status'  => 'error',
                     'message' => config('app.debug') ? $e->getMessage() : 'Terjadi kesalahan pada server.',
                     'errors'  => null,
+                    'meta'    => [
+                        'service_name' => 'Invoice-Winner-Service',
+                        'api_version'  => 'v1',
+                    ],
                 ], $statusCode ?: 500);
             }
         });

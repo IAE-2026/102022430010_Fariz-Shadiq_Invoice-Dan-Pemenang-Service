@@ -31,6 +31,10 @@ class ApiKeyAuth
                 'errors'  => [
                     'header' => 'X-IAE-KEY header is required.',
                 ],
+                'meta'    => [
+                    'service_name' => 'Invoice-Winner-Service',
+                    'api_version'  => 'v1',
+                ],
             ], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -41,6 +45,10 @@ class ApiKeyAuth
                 'message' => 'API Key tidak valid atau tidak memiliki akses.',
                 'errors'  => [
                     'header' => 'Invalid X-IAE-KEY value.',
+                ],
+                'meta'    => [
+                    'service_name' => 'Invoice-Winner-Service',
+                    'api_version'  => 'v1',
                 ],
             ], Response::HTTP_FORBIDDEN);
         }

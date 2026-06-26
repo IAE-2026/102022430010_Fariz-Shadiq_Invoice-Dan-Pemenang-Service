@@ -23,6 +23,30 @@ use OpenApi\Attributes as OA;
     description: "Sertakan API Key berupa NIM Anda (contoh: 102022430010) pada header X-IAE-KEY"
 )]
 
+// --- Endpoint Annotations ---
+
+#[OA\Get(
+    path: "/api/v1/health",
+    summary: "Health check endpoint",
+    description: "Mengecek apakah service sedang berjalan dengan baik.",
+    operationId: "healthCheck",
+    tags: ["Health"],
+    security: [["ApiKeyAuth" => []]],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: "Service is running",
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: "status", type: "string", example: "success"),
+                    new OA\Property(property: "message", type: "string", example: "Invoice-Winner Service is running."),
+                ]
+            )
+        ),
+        new OA\Response(response: 401, ref: "#/components/responses/Unauthorized")
+    ]
+)]
+
 // --- Response Components ---
 
 #[OA\Response(

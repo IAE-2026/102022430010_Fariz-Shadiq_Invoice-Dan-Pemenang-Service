@@ -76,6 +76,10 @@ trait BaseApiResponse
             'status'  => 'error',
             'message' => $message,
             'errors'  => $errors,
+            'meta'    => [
+                'service_name' => 'Invoice-Winner-Service',
+                'api_version'  => 'v1',
+            ],
         ], $statusCode);
     }
 
